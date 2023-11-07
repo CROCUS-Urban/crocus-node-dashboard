@@ -1,4 +1,4 @@
 streamlit
-ploty
+plotly
 pandas
 sage_data_client
