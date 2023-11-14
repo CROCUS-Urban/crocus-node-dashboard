@@ -116,13 +116,13 @@ def main():
     selected_names = st.sidebar.multiselect('Select specific names', unique_names, default=unique_names)
 
     # Date and Time picker, along with an option for real time, which will keep updating every 60 seconds to show real time results starting from a specific start date & time
-    real_time = st.sidebar.checkbox("Real-time")
+    real_time = st.sidebar.toggle("Real-time")
 
-    # Checkbox for removing potential outliers
-    remove_outliers = st.sidebar.checkbox('Remove Potential Outliers')    
+    # Toggle for removing potential outliers
+    remove_outliers = st.sidebar.toggle('Remove Potential Outliers')    
 
     # Quick Conversion Table in Sidebar
-    if st.sidebar.checkbox("Quick Metrics"):
+    if st.sidebar.toggle("Quick Metrics"):
         st.sidebar.write("### Metrics")
         conversion_df = pd.DataFrame.from_dict(METRIC_MEASUREMENT, orient='index', columns=['Measurement'])
         st.sidebar.table(conversion_df) 
@@ -155,7 +155,7 @@ def main():
         # Filter by selected names
         df = df[df['name'].isin(selected_names)]
 
-        # Remove potential outliers if checkbox is checked with values less than -10k and more than 10k
+        # Remove potential outliers if toggle is checked with values less than -10k and more than 10k
         if remove_outliers:
             df = df[(df['value'] < 10000) & (df['value'] > -10000)]
 
