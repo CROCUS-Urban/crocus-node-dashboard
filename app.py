@@ -193,6 +193,7 @@ def main():
         # Visualize section
         if not df.empty:
             st.write('### Data Visualization')
+            df = df.sort_values('timestamp')
             fig = px.line(df, x='timestamp', y='value', color='name', title=f'{device_option} Data Visualization')
             st.plotly_chart(fig)
 
