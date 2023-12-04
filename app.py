@@ -209,11 +209,11 @@ def main():
             fig_box = px.box(df, x='name', y='value', title=f'{device_option} Box Plot Visualization for Values')
             st.plotly_chart(fig_box)
 
-            # Heatmap
-            st.write('### Heatmap Visualization')
-            heatmap_data = df.pivot_table(index='timestamp', columns='name', values='value', aggfunc='mean').reset_index()
-            fig_heatmap = px.imshow(heatmap_data.corr(), title=f'{device_option} Heatmap Visualization')
-            st.plotly_chart(fig_heatmap)              
+            # # Heatmap
+            # st.write('### Heatmap Visualization')
+            # heatmap_data = df.pivot_table(index='timestamp', columns='name', values='value', aggfunc='mean').reset_index()
+            # fig_heatmap = px.imshow(heatmap_data.corr(), title=f'{device_option} Heatmap Visualization')
+            # st.plotly_chart(fig_heatmap)              
 
         # If real-time is selected, rerun the app after 60 seconds
         if real_time:
