@@ -5,6 +5,7 @@ import plotly.express as px
 import datetime
 import base64
 import time
+import numpy as np
 
 # Set the page title & icon
 st.set_page_config(
@@ -213,7 +214,25 @@ def main():
             # st.write('### Heatmap Visualization')
             # heatmap_data = df.pivot_table(index='timestamp', columns='name', values='value', aggfunc='mean').reset_index()
             # fig_heatmap = px.imshow(heatmap_data.corr(), title=f'{device_option} Heatmap Visualization')
-            # st.plotly_chart(fig_heatmap)              
+            # st.plotly_chart(fig_heatmap)  
+
+            # Calculate Time Differences for Each Sensor in Minutes
+            df['timestamp'] = pd.to_datetime(df['timestamp'])
+            df = df.sort_values(['name', 'timestamp'])  # Ensure sorting by name and then timestamp
+
+            # Calculate time differences for each submission in minutes using transform to maintain index alignment
+            df['time_diff'] = df.groupby('name')['timestamp'].transform(lambda x: x.diff().dt.total_seconds() / 60)
+
+            # Take the absolute value to ensure no negative time differences
+            df['time_diff'] = df['time_diff'].abs()
+
+            # Drop the first NaN value which is the result of the diff operation for the first entry of each group
+            df = df.dropna(subset=['time_diff'])
+
+            # Box Plot for Time Differences in Minutes
+            st.write('### Time Interval Box Plot Visualization for Each Sensor')
+            fig_time_diff = px.box(df, x='name', y='time_diff', title='Time Interval Between Submissions for Each Sensor (in Minutes)', labels={'time_diff': 'Time Interval (Minutes)'})
+            st.plotly_chart(fig_time_diff)
 
         # If real-time is selected, rerun the app after 60 seconds
         if real_time:
