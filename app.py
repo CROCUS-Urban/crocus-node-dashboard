@@ -69,7 +69,7 @@ DEVICE_SPECIFIC_NAMES = {
 
 def fetch_data(start, end, device_name, selected_names):
     if device_name == 'MFR Node':
-        plugin = "registry.sagecontinuum.org/flozano/lorawan-listener:0.0.7.*"
+        plugin = "registry.sagecontinuum.org/flozano/lorawan-listener:0.0.8.*"
         filters = {
             "plugin": plugin,
             "deviceName": device_name,
@@ -77,7 +77,7 @@ def fetch_data(start, end, device_name, selected_names):
             "name": "|".join(selected_names)
         }
     elif device_name == 'SFM1x Sap Flow':
-        plugin = "registry.sagecontinuum.org/flozano/lorawan-listener:0.0.7.*"
+        plugin = "registry.sagecontinuum.org/flozano/lorawan-listener:0.0.8.*"
         filters = {
             "plugin": plugin,
             "deviceName": device_name,
@@ -85,7 +85,7 @@ def fetch_data(start, end, device_name, selected_names):
             "name": "|".join(selected_names)
         }
     elif device_name == 'Waggle Node':
-        plugin = "waggle/plugin-iio:0.7.0.*"
+        plugin = "waggle/plugin-iio:0.6.0.*"
         filters = {
             "plugin": plugin,
             "vsn": "W039",
