@@ -5,8 +5,8 @@ The "CROCUS Node Dashboard" is a Streamlit web app designed to facilitate the vi
 # Web App
 Click [Here](https://crocus-node-dashboard.streamlit.app/ "Here") To View This Dashboard Online!
 
-![image](https://github-production-user-asset-6210df.s3.amazonaws.com/63890666/281176241-168bedf0-216b-414b-ae13-c26fd507df43.png)
-![image](https://github-production-user-asset-6210df.s3.amazonaws.com/63890666/281176353-52d37ac6-a3c1-4fed-bd69-ffb0f4fb9437.png)
+![image](https://github.com/CROCUS-Urban/crocus-node-dashboard/assets/63890666/d8bd7152-4a70-4b79-aebf-97eb08592566)
+![image](https://github.com/CROCUS-Urban/crocus-node-dashboard/assets/63890666/d06950ac-2d42-4ded-82ec-21150e2f36a8)
 
 ## Features
 
