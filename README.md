@@ -15,7 +15,7 @@ Click [Here](https://crocus-node-dashboard.streamlit.app/ "Here") To View This D
 -   Filtering options for specific date and time ranges.
 -   Option to download the data as a CSV file.
 -   Customizable charts with Plotly for data analysis.
--   Line chart, heatmap and box plot visualizations for deeper data insights.
+-   Line chart, and box plot visualizations for deeper data insights.
 -   Automatic refresh in real-time mode for real-time information.
 -   Quick conversion table for metric measurements.
 
