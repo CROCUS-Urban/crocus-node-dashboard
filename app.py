@@ -100,7 +100,17 @@ def fetch_data(start, end, device_name, selected_names):
     
     return pd.DataFrame(df_data)
 
+# Initialize prompt_history at the beginning of the script
+if 'prompt_history' not in st.session_state:
+    st.session_state['prompt_history'] = []
+    
 def main():
+    # Initialize session state variables if they don't exist
+    if 'df' not in st.session_state:
+        st.session_state.df = pd.DataFrame()
+    if 'api_key' not in st.session_state:
+        st.session_state.api_key = ""
+    
     # Title
     st.title('CROCUS Node Dashboard 📊')
     # Description under the title
@@ -148,10 +158,13 @@ def main():
         st.warning('Start and end times cannot be exactly the same.')
         return
 
-    if st.sidebar.button('Submit'):
-        # Fetch and display data
-        with st.spinner('Fetching data...'):
-            df = fetch_data(start, end, device_option, selected_names)
+    if st.sidebar.button('Submit') or ('df' in st.session_state and not st.session_state.df.empty):
+        # Existing logic to fetch and display data, modified to save df in st.session_state
+        if 'Submit':
+            with st.spinner('Fetching data...'):
+                st.session_state.df = fetch_data(start, end, device_option, selected_names)
+        
+        df = st.session_state.df
 
         # Filter by selected names
         df = df[df['name'].isin(selected_names)]
