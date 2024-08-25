@@ -54,6 +54,7 @@ After running the app, users are greeted with a selection of CROCUS Nodes and th
 -   `pandas`
 -   `sage_data_client`
 -   `plotly`
+-   `st-theme`
 
 You can install them using pip:
 
