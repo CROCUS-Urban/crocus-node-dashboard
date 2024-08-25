@@ -24,6 +24,9 @@ def display_dataframe(df, device_option, selected_names, data_units, height=400)
         'meta.vsn': 'Node'
     }, inplace=True)
 
+    # Sort dataframe by Timestamp
+    df = df.sort_values(by='Timestamp')
+
     # Display data as a dataframe along with the device name and count in the header
     entry_count = len(df.index)
     st.subheader(f"{device_option} Data - {entry_count} Entries")
