@@ -1,4 +1,5 @@
-streamlit
-plotly
-pandas
+streamlit==1.36.0
+plotly==5.22.0
+pandas==2.2.2
 sage_data_client
+st-theme==1.2.3

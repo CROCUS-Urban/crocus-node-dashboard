@@ -1,6 +1,6 @@
 # CROCUS Node Dashboard
 
-The "CROCUS Node Dashboard" is a Streamlit web app designed to facilitate the visualization and analysis of environmental data collected by various sensors on the [W039 Waggle Node](https://portal.sagecontinuum.org/node/W039) located at the Argonne National Laboratory. The app uses the [sage-data-client](https://github.com/sagecontinuum/sage-data-client) Python library to query and retrieve data, which users can interact with through the web UI.
+The "CROCUS Node Dashboard" is a Streamlit web app designed to facilitate the visualization and analysis of environmental data collected by various sensors on multiple CROCUS Nodes located in Chicago, IL. The app uses the [sage-data-client](https://github.com/sagecontinuum/sage-data-client) Python library to query and retrieve data, which users can interact with through the web UI.
 
 # Web App
 Click [Here](https://crocus-node-dashboard.streamlit.app/ "Here") To View This Dashboard Online!
@@ -10,31 +10,29 @@ Click [Here](https://crocus-node-dashboard.streamlit.app/ "Here") To View This D
 
 ## Features
 
--   Real-time data visualization for selected sensors.
--   Interactive selection of devices and metrics.
--   Filtering options for specific date and time ranges.
--   Option to download the data as a CSV file.
--   Customizable charts with Plotly for data analysis.
--   Line chart, and box plot visualizations for deeper data insights.
--   Automatic refresh in real-time mode for real-time information.
--   Quick conversion table for metric measurements.
+-   Real-time and historical data visualization for selected sensors on multiple CROCUS Nodes.
+-   Interactive selection of devices and metrics across different nodes.
+-   Filtering options for specific date and time ranges with a quick selection for last hour, day, week, or month.
+-   Customizable charts with Plotly for in-depth data analysis.
+-   Download the filtered data as a CSV file for further analysis.
+-   Visualizations include line charts, frequency bar charts, and box plots for deeper data insights.
+-   Automatic conversion of UTC timestamps to local time for easier interpretation.
 
 ## Usage
 
-After running the app, users are greeted with a selection of devices and sensor readings available on the W039 Waggle Node. Users can select the desired device, specific sensors within that device, and a range of dates and times for which they wish to visualize the data.
+After running the app, users are greeted with a selection of CROCUS Nodes and the devices available on those nodes. Users can select the desired node, device, specific sensors, and a range of dates and times for which they want to visualize the data.
 
 ### Data Selection and Visualization
 
--   **Select Device**: Choose from available devices such as "MFR Node", "SFM1x Sap Flow", or "Waggle Node".
--   **Select specific names**: Pick the sensor data metrics you are interested in, all sensor data is enabled by default.
--   **Date and Time Range**: Specify the start and end dates and times for the data.
--   **Real-time Data**: Toggle real-time data updates on or off.
--   **Remove Potential Outliers**: Toggle removing potential outliers to remove values that are below -10,000 and above 10,000.
--   **Data Visualization**: View interactive graphs for selected metrics.
+-   **Select CROCUS Node**: Choose from available CROCUS Nodes such as "UIC CROCUS Node (W096)", "CSU CROCUS Node (W08E)", etc.
+-   **Select Device**: Pick the device from the selected node, including options like "CROCUS Node" or "Sap Flow Sensors."
+-   **Select Specific Data**: Choose the sensor data metrics you are interested in, only the selected metrics will be displayed.
+-   **Time Range**: Select a predefined time range (Last Hour, Last Day, Last Week, Last Month) or customize your date and time range.
+-   **Data Visualization**: View interactive graphs for selected metrics, with options to visualize data as line charts, frequency bar charts, and box plots.
 
 ### Download Options
 
--   **CSV Export**: Download the displayed data as a CSV file for offline analysis, the filename is saved as the specified time range.
+-   **CSV Export**: Download the filtered data as a CSV file for offline analysis, the filename is saved as the specified time range.
 
 ## Requirements
 
@@ -43,6 +41,7 @@ After running the app, users are greeted with a selection of devices and sensor 
 -   Pandas
 -   sage_data_client
 -   Plotly
+-   st-theme
 
 ## Installation
 
@@ -64,3 +63,9 @@ You can install them using pip:
 3.  Run the app:
 
 `streamlit run app.py`
+
+## About CROCUS
+
+Community Research on Climate and Urban Science (CROCUS) is an Urban Integrated Field Laboratory established by Argonne National Laboratory. CROCUS aims to understand and address the challenges of Chicago's changing climate, with a focus on environmental justice in the Chicago region.
+
+For more information, visit [CROCUS Urban](https://crocus-urban.org/).
