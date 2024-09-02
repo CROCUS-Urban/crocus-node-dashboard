@@ -86,14 +86,19 @@ device_option = st.sidebar.selectbox(
     key='device_option_widget'
 )
 
+# Extract the serial number (without species) for backend processing
+def extract_serial_number(full_string):
+    return full_string.split(' ')[0]
+
 # Show serial number selection if Sap Flow Sensors is selected
 if device_option == 'Sap Flow Sensors':
-    sap_flow_serial = st.sidebar.selectbox(
+    sap_flow_serial_full = st.sidebar.selectbox(
         'Select Sap Flow Sensor Serial Number',
         SAP_FLOW_SERIAL_NUMBERS,
         index=SAP_FLOW_SERIAL_NUMBERS.index(st.session_state.sap_flow_serial) if st.session_state.sap_flow_serial else 0,
         key='sap_flow_serial_widget'
     )
+    sap_flow_serial = extract_serial_number(sap_flow_serial_full)
 else:
     sap_flow_serial = ""
 

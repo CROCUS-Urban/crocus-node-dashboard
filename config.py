@@ -79,14 +79,14 @@ CROCUS_NODES = {
 }
 
 SAP_FLOW_SERIAL_NUMBERS = [
-    "SX61NA0D",
-    "SX61NA0W",
-    "SX61NA0E",
-    "SX61NA0P",
-    "SX61NA0H",
-    "SX61NA08",
-    "SX61NA0T",
-    "SX61NA0Q"
+    "SX61NA0D (Cottonwood)",
+    "SX61NA0W (Cottonwood)",
+    "SX61NA0E (Cottonwood)",
+    "SX61NA0P (American Elm)",
+    "SX61NA0H (American Elm)",
+    "SX61NA08 (Maple)",
+    "SX61NA0T (Maple)",
+    "SX61NA0Q (Maple)"
 ]
 
 DATA_UNITS = {
