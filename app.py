@@ -27,7 +27,7 @@ if theme and theme['base'] == 'dark':
 else:
     logo = 'images/crocus_light.png'
 
-# Sort the CROCUS_NODES dictionary by node names
+# Sort the CROCUS_NODES dictionary by keys (node names)
 sorted_crocus_nodes = dict(sorted(CROCUS_NODES.items()))
 
 # Initialize session state variables
@@ -95,10 +95,12 @@ if device_option == 'Sap Flow Sensors':
     sap_flow_serial_full = st.sidebar.selectbox(
         'Select Sap Flow Sensor Serial Number',
         SAP_FLOW_SERIAL_NUMBERS,
-        index=SAP_FLOW_SERIAL_NUMBERS.index(st.session_state.sap_flow_serial) if st.session_state.sap_flow_serial else 0,
+        index=SAP_FLOW_SERIAL_NUMBERS.index(next(filter(lambda x: extract_serial_number(x) == st.session_state.sap_flow_serial, SAP_FLOW_SERIAL_NUMBERS), SAP_FLOW_SERIAL_NUMBERS[0]))
+        if st.session_state.sap_flow_serial else 0,
         key='sap_flow_serial_widget'
     )
     sap_flow_serial = extract_serial_number(sap_flow_serial_full)
+    st.session_state.sap_flow_serial = sap_flow_serial
 else:
     sap_flow_serial = ""
 
@@ -177,7 +179,7 @@ if not df.empty:
     df['timestamp'] = pd.to_datetime(df['timestamp']).dt.tz_convert(st.session_state.timezone)
 
 if not df.empty:
-    # Display data as a dataframe along with the device name and count in the header
+    # Display data as a dataframe along with the device name and entry count in the header
     display_dataframe(df, st.session_state.device_option, st.session_state.selected_names, DATA_UNITS, height=400)
 
     # Visualize data
