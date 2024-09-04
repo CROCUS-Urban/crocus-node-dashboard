@@ -16,6 +16,9 @@ def display_dataframe(df, device_option, selected_names, data_units, height=400)
     # Add units to the data names and handle empty units
     df['name'] = df['name'].apply(lambda x: f"{x} ({data_units.get(x, '')})" if data_units.get(x, '') else x)
 
+    # Format the Timestamp column to remove the timezone information
+    df['timestamp'] = df['timestamp'].apply(lambda x: str(x).split('.')[0])
+
     # Rename columns for better readability
     df.rename(columns={
         'timestamp': 'Timestamp',
