@@ -1,54 +1,32 @@
 import sage_data_client
 import pandas as pd
+from config import CROCUS_NODES
 
 def fetch_data(start, end, node, device, selected_names):
-    # Define plugins and the corresponding filters
-    plugin_filters = []
-
-    if device == 'Sap Flow Sensors':
-        plugin_filters.append({
-            "plugin": "registry.sagecontinuum.org/flozano/lorawan-listener:*.*",
-            "vsn": node.split('(')[-1][:-1],
-            "name": "|".join(selected_names)
-        })
-
-    if any(name.startswith("aqt") for name in selected_names):
-        plugin_filters.append({
-            "plugin": "registry.sagecontinuum.org/jrobrien/waggle-aqt:*.*",
-            "vsn": node.split('(')[-1][:-1],
-            "name": "|".join([name for name in selected_names if name.startswith("aqt")])
-        })
-
-    if any(name.startswith("co2") or name.startswith("h2o") or name.startswith("sonic") for name in selected_names):
-        plugin_filters.append({
-            "plugin": "registry.sagecontinuum.org/bhupendraraut/licor-smartflux:*.*",
-            "vsn": node.split('(')[-1][:-1],
-            "name": "|".join([name for name in selected_names if name.startswith("co2") or name.startswith("h2o") or name.startswith("sonic")])
-        })
-
-    if any("raingauge" in name for name in selected_names):
-        plugin_filters.append({
-            "plugin": "waggle/plugin-raingauge:*.*",
-            "vsn": node.split('(')[-1][:-1],
-            "name": "|".join([name for name in selected_names if "raingauge" in name])
-        })
-
-    if any(name.startswith("env") for name in selected_names):
-        plugin_filters.append({
-            "plugin": "waggle/plugin-iio:*.*",
-            "vsn": node.split('(')[-1][:-1],
-            "name": "|".join([name for name in selected_names if name.startswith("env")])
-        })
-
-    # Query data for each plugin filter and combine results
+    # Get the available device types for the node
+    devices = CROCUS_NODES[node]
+    
+    # Define filters based on the selected names
     df_list = []
-    for filters in plugin_filters:
-        df_data = sage_data_client.query(
-            start=start,
-            end=end, 
-            filter=filters
-        )
-        df_list.append(pd.DataFrame(df_data))
+    
+    for device_type, device_info in devices.items():
+        if any(name in device_info['sensors'] for name in selected_names):
+            plugin = device_info['plugin']
+            filtered_names = [name for name in selected_names if name in device_info['sensors']]
+            
+            query_filter = {
+                "plugin": plugin,
+                "vsn": node.split('(')[-1][:-1],
+                "name": "|".join(filtered_names)
+            }
+            
+            # Fetch data using sage_data_client
+            df_data = sage_data_client.query(
+                start=start,
+                end=end,
+                filter=query_filter
+            )
+            df_list.append(pd.DataFrame(df_data))
 
     # Combine all dataframes into one
     if df_list:

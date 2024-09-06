@@ -105,7 +105,7 @@ else:
     sap_flow_serial = ""
 
 # Multi-select for names so users can view multiple names and values
-unique_names = sorted_crocus_nodes[node_option][device_option]
+unique_names = CROCUS_NODES[node_option][device_option]['sensors']
 selected_names = st.sidebar.multiselect(
     'Select specific data',
     unique_names,
