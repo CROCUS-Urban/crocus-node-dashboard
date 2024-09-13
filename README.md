@@ -32,6 +32,8 @@ After running the app, users are greeted with a selection of CROCUS Nodes and th
 ### Download Options
 
 -   **CSV Export**: Download the filtered data as a CSV file for offline analysis, the filename is saved as the specified time range.
+-   **View All Metadata**: Option to export additional metadata columns along with the sensor data.
+-   **Pivot Table Export**: If the "Display Sensors as Columns" option is selected, the data will be pivoted with sensors as columns in the exported CSV.
 
 ## Requirements
 
