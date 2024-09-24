@@ -130,7 +130,7 @@ SAP_FLOW_SERIAL_NUMBERS = [
     "SX61NA0H (American Elm)",
     "SX61NA08 (Maple)",
     "SX61NA0T (Maple)",
-    "SX61NA0Q (Maple)"
+    "SX61NA0A (Maple)"
 ]
 
 DATA_UNITS = {
