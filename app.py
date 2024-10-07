@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 import pytz
 from streamlit_theme import st_theme
-from config import CROCUS_NODES, SAP_FLOW_SERIAL_NUMBERS, DATA_UNITS, NODE_PORTAL_LINKS
+from config import CROCUS_NODES, SAP_FLOW_SERIAL_NUMBERS, MFR_SERIAL_NUMBERS, DATA_UNITS, NODE_PORTAL_LINKS, SENSOR_FULL_NAMES
 from data.data_fetcher import fetch_data, filter_data_by_serial
 from components.visualization import plot_visualizations
 from components.display_data import display_dataframe
@@ -33,14 +33,20 @@ sorted_crocus_nodes = dict(sorted(CROCUS_NODES.items()))
 # Initialize session state variables
 if 'sap_flow_data' not in st.session_state:
     st.session_state['sap_flow_data'] = pd.DataFrame()
+if 'mfr_data' not in st.session_state:
+    st.session_state['mfr_data'] = pd.DataFrame()
 if 'df' not in st.session_state:
     st.session_state.df = pd.DataFrame()
 if 'sap_flow_serial' not in st.session_state:
     st.session_state.sap_flow_serial = SAP_FLOW_SERIAL_NUMBERS[0]
+if 'mfr_serial' not in st.session_state:
+    st.session_state.mfr_serial = MFR_SERIAL_NUMBERS[0]
 if 'node_option' not in st.session_state:
     st.session_state.node_option = list(sorted_crocus_nodes.keys())[0]
 if 'device_option' not in st.session_state:
     st.session_state.device_option = list(sorted_crocus_nodes[st.session_state.node_option].keys())[0]
+if 'selected_sensor' not in st.session_state:
+    st.session_state.selected_sensor = ''
 if 'selected_names' not in st.session_state:
     st.session_state.selected_names = []
 if 'start_date' not in st.session_state:
@@ -90,7 +96,7 @@ device_option = st.sidebar.selectbox(
 def extract_serial_number(full_string):
     return full_string.split(' ')[0]
 
-# Show serial number selection if Sap Flow Sensors is selected
+# Show serial number selection if Sap Flow Sensors or MFR Nodes is selected
 if device_option == 'Sap Flow Sensors':
     sap_flow_serial_full = st.sidebar.selectbox(
         'Select Sap Flow Sensor Serial Number',
@@ -101,13 +107,55 @@ if device_option == 'Sap Flow Sensors':
     )
     sap_flow_serial = extract_serial_number(sap_flow_serial_full)
     st.session_state.sap_flow_serial = sap_flow_serial
+    mfr_serial = ""
+elif device_option == 'MFR Nodes':
+    mfr_serial_full = st.sidebar.selectbox(
+        'Select MFR Node Serial Number',
+        MFR_SERIAL_NUMBERS,
+        index=MFR_SERIAL_NUMBERS.index(next(filter(lambda x: extract_serial_number(x) == st.session_state.mfr_serial, MFR_SERIAL_NUMBERS), MFR_SERIAL_NUMBERS[0]))
+        if st.session_state.mfr_serial else 0,
+        key='mfr_serial_widget'
+    )
+    mfr_serial = extract_serial_number(mfr_serial_full)
+    st.session_state.mfr_serial = mfr_serial
+    sap_flow_serial = ""
 else:
     sap_flow_serial = ""
+    mfr_serial = ""
+
+# Initialize selected_sensor
+if 'selected_sensor' not in st.session_state:
+    st.session_state.selected_sensor = ''
 
 # Multi-select for names so users can view multiple names and values
-unique_names = CROCUS_NODES[node_option][device_option]['sensors']
+if device_option == 'MFR Nodes':
+    sensors_dict = CROCUS_NODES[node_option][device_option]['sensors']
+    sensor_list = []
+    display_name_to_sensor_id = {}
+    for sensor_id in sensors_dict.keys():
+        full_name = SENSOR_FULL_NAMES.get(sensor_id, "")
+        display_name = f"{sensor_id} ({full_name})"
+        sensor_list.append(display_name)
+        display_name_to_sensor_id[display_name] = sensor_id
+
+    selected_sensor_display = st.sidebar.selectbox(
+        'Select Specific Sensor',
+        sensor_list,
+        key='selected_sensor_widget'
+    )
+    selected_sensor = display_name_to_sensor_id[selected_sensor_display]
+    st.session_state.selected_sensor = selected_sensor
+
+    # Get the measurements for the selected sensor
+    unique_names = sensors_dict[selected_sensor]
+else:
+    unique_names = CROCUS_NODES[node_option][device_option]['sensors']
+
+# 'Select Specific Data' label
+select_data_label = 'Select Specific Data'
+
 selected_names = st.sidebar.multiselect(
-    'Select specific data',
+    select_data_label,
     unique_names,
     default=[],
     key='selected_names_widget'
@@ -155,8 +203,12 @@ if st.sidebar.button('Submit'):
     else:
         st.session_state.node_option = node_option
         st.session_state.device_option = device_option
-        st.session_state.sap_flow_serial = sap_flow_serial
         st.session_state.selected_names = selected_names
+        if device_option == 'Sap Flow Sensors':
+            st.session_state.sap_flow_serial = sap_flow_serial
+        elif device_option == 'MFR Nodes':
+            st.session_state.mfr_serial = mfr_serial
+            st.session_state.selected_sensor = selected_sensor
         if time_range_option == 'Custom':
             st.session_state.start_date = start_date
             st.session_state.start_time = start_time
@@ -169,6 +221,9 @@ if st.sidebar.button('Submit'):
             if device_option == 'Sap Flow Sensors' and 'sap_flow_serial' in st.session_state:
                 st.session_state.sap_flow_data = fetch_data(start, end, node_option, device_option, selected_names)
                 st.session_state.df = filter_data_by_serial(st.session_state.sap_flow_data, st.session_state.sap_flow_serial)
+            elif device_option == 'MFR Nodes' and 'mfr_serial' in st.session_state:
+                st.session_state.mfr_data = fetch_data(start, end, node_option, device_option, selected_names)
+                st.session_state.df = filter_data_by_serial(st.session_state.mfr_data, st.session_state.mfr_serial)
             else:
                 st.session_state.df = fetch_data(start, end, node_option, device_option, selected_names)
 
@@ -184,6 +239,8 @@ if not df.empty:
 
     # Visualize data
     plot_visualizations(df, st.session_state.device_option)
+else:
+    st.warning('No data found for the selected options.')
 
 st.markdown("---")
 st.markdown("")
