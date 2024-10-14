@@ -1,13 +1,28 @@
 CROCUS_NODES = {
     'CSU CROCUS Node (W08E)': {
         'Weather Sensors': {
-            'plugin': '10.31.81.1:5000/local/waggle-wxt536',
+            'plugin': 'registry.sagecontinuum.org/jrobrien/waggle-wxt536:*.*',
             'sensors': [
                 "wxt.env.temp",
                 "wxt.env.humidity",
                 "wxt.env.pressure",
                 "wxt.rain.accumulation",
                 "wxt.wind.speed"
+            ]
+        },
+        'Air Quality Sensors': {
+            'plugin': 'registry.sagecontinuum.org/jrobrien/waggle-aqt:*.*',
+            'sensors': [
+                "aqt.env.temp",
+                "aqt.env.humidity",
+                "aqt.env.pressure",
+                "aqt.gas.co",
+                "aqt.gas.no",
+                "aqt.gas.no2",
+                "aqt.gas.ozone",
+                "aqt.particle.pm1",
+                "aqt.particle.pm10",
+                "aqt.particle.pm2.5"
             ]
         },
         'Sap Flow Sensors': {
