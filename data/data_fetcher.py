@@ -58,7 +58,8 @@ def filter_data_by_serial(df, serial):
     # List of possible metadata keys for serial numbers
     serial_keys = [
         'meta.Serial Number_tag',
-        'meta.serial_number_tag'
+        'meta.serial_number_tag',
+        'meta.serial number_tag'
     ]
 
     # Iterate over possible keys to filter data
@@ -67,12 +68,7 @@ def filter_data_by_serial(df, serial):
             filtered_df = pd.concat([filtered_df, df[df[key] == serial]])
 
     if filtered_df.empty and not df.empty:
-        st.warning(f"No data found matching the serial number {serial}.")
-        st.write("Available serial numbers in data:")
-        available_serials = set()
-        for key in serial_keys:
-            if key in df.columns:
-                available_serials.update(df[key].unique())
-        st.write(available_serials)
+        st.warning(f"No data found matching the serial number {serial}. The device may be offline or temporarily unavailable.")
+        return pd.DataFrame()
 
     return filtered_df

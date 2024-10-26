@@ -3,7 +3,7 @@ import datetime
 import pandas as pd
 import pytz
 from streamlit_theme import st_theme
-from config import CROCUS_NODES, SAP_FLOW_SERIAL_NUMBERS, MFR_SERIAL_NUMBERS, DATA_UNITS, NODE_PORTAL_LINKS, SENSOR_FULL_NAMES
+from config import CROCUS_NODES, DATA_UNITS, NODE_PORTAL_LINKS, SENSOR_FULL_NAMES
 from data.data_fetcher import fetch_data, filter_data_by_serial
 from components.visualization import plot_visualizations
 from components.display_data import display_dataframe
@@ -37,10 +37,6 @@ if 'mfr_data' not in st.session_state:
     st.session_state['mfr_data'] = pd.DataFrame()
 if 'df' not in st.session_state:
     st.session_state.df = pd.DataFrame()
-if 'sap_flow_serial' not in st.session_state:
-    st.session_state.sap_flow_serial = SAP_FLOW_SERIAL_NUMBERS[0]
-if 'mfr_serial' not in st.session_state:
-    st.session_state.mfr_serial = MFR_SERIAL_NUMBERS[0]
 if 'node_option' not in st.session_state:
     st.session_state.node_option = list(sorted_crocus_nodes.keys())[0]
 if 'device_option' not in st.session_state:
@@ -58,9 +54,24 @@ if 'end_date' not in st.session_state:
 if 'end_time' not in st.session_state:
     st.session_state.end_time = datetime.datetime.now().time()
 if 'timezone' not in st.session_state:
-    st.session_state.timezone = pytz.timezone("America/Chicago")  # Will make this automatic in the near future
+    st.session_state.timezone = pytz.timezone("America/Chicago")
 if 'time_range_option' not in st.session_state:
     st.session_state.time_range_option = 'Last Day'
+
+# Selection changes
+def on_node_change():
+    st.session_state.device_option = list(sorted_crocus_nodes[st.session_state.node_option].keys())[0]
+    st.session_state.selected_names = []
+    st.session_state.df = pd.DataFrame()
+
+def on_device_change():
+    st.session_state.selected_names = []
+    st.session_state.df = pd.DataFrame()
+    if st.session_state.device_option == 'MFR Nodes':
+        sensors_dict = sorted_crocus_nodes[st.session_state.node_option][st.session_state.device_option]['sensors']
+        st.session_state.selected_sensor = list(sensors_dict.keys())[0]
+    elif st.session_state.device_option == 'Sap Flow Sensors':
+        st.session_state.selected_sensor = ''
 
 # Title
 st.title('CROCUS Node Dashboard 📊')
@@ -71,65 +82,81 @@ st.write("This is an interface to visualize and analyze data from various sensor
 st.sidebar.image(logo, use_column_width=True)
 
 # Choose CROCUS Node to fetch with hover text
-node_option = st.sidebar.selectbox(
+st.session_state.node_option = st.sidebar.selectbox(
     'Select CROCUS Node',
     list(sorted_crocus_nodes.keys()),
     index=list(sorted_crocus_nodes.keys()).index(st.session_state.node_option),
     key='node_option_widget',
-    help=f"[View Node Portal]({NODE_PORTAL_LINKS.get(st.session_state.node_option, '')})"
+    help=f"[View Node Portal]({NODE_PORTAL_LINKS.get(st.session_state.node_option, '')})",
+    on_change=on_node_change
 )
 
-# Reset device_option if node_option changes
-if st.session_state.node_option != node_option:
-    st.session_state.node_option = node_option
-    st.session_state.device_option = list(sorted_crocus_nodes[node_option].keys())[0]
-
 # Choose device to fetch
-device_option = st.sidebar.selectbox(
+st.session_state.device_option = st.sidebar.selectbox(
     'Select Device',
-    list(sorted_crocus_nodes[node_option].keys()),
-    index=list(sorted_crocus_nodes[node_option].keys()).index(st.session_state.device_option),
-    key='device_option_widget'
+    list(sorted_crocus_nodes[st.session_state.node_option].keys()),
+    index=list(sorted_crocus_nodes[st.session_state.node_option].keys()).index(st.session_state.device_option),
+    key='device_option_widget',
+    on_change=on_device_change
 )
 
 # Extract the serial number (without species) for backend processing
 def extract_serial_number(full_string):
     return full_string.split(' ')[0]
 
+# Initialize serial number session state if does not exists
+if 'sap_flow_serial' not in st.session_state:
+    if st.session_state.device_option == 'Sap Flow Sensors' and 'serial_numbers' in sorted_crocus_nodes[st.session_state.node_option][st.session_state.device_option]:
+        available_serials = sorted_crocus_nodes[st.session_state.node_option][st.session_state.device_option]['serial_numbers']
+        st.session_state.sap_flow_serial = extract_serial_number(available_serials[0]) if available_serials else ''
+    else:
+        st.session_state.sap_flow_serial = ''
+
+if 'mfr_serial' not in st.session_state:
+    if st.session_state.device_option == 'MFR Nodes' and 'serial_numbers' in sorted_crocus_nodes[st.session_state.node_option][st.session_state.device_option]:
+        available_serials = sorted_crocus_nodes[st.session_state.node_option][st.session_state.device_option]['serial_numbers']
+        st.session_state.mfr_serial = extract_serial_number(available_serials[0]) if available_serials else ''
+    else:
+        st.session_state.mfr_serial = ''
+
 # Show serial number selection if Sap Flow Sensors or MFR Nodes is selected
-if device_option == 'Sap Flow Sensors':
-    sap_flow_serial_full = st.sidebar.selectbox(
-        'Select Sap Flow Sensor Serial Number',
-        SAP_FLOW_SERIAL_NUMBERS,
-        index=SAP_FLOW_SERIAL_NUMBERS.index(next(filter(lambda x: extract_serial_number(x) == st.session_state.sap_flow_serial, SAP_FLOW_SERIAL_NUMBERS), SAP_FLOW_SERIAL_NUMBERS[0]))
-        if st.session_state.sap_flow_serial else 0,
-        key='sap_flow_serial_widget'
-    )
-    sap_flow_serial = extract_serial_number(sap_flow_serial_full)
-    st.session_state.sap_flow_serial = sap_flow_serial
-    mfr_serial = ""
-elif device_option == 'MFR Nodes':
-    mfr_serial_full = st.sidebar.selectbox(
-        'Select MFR Node Serial Number',
-        MFR_SERIAL_NUMBERS,
-        index=MFR_SERIAL_NUMBERS.index(next(filter(lambda x: extract_serial_number(x) == st.session_state.mfr_serial, MFR_SERIAL_NUMBERS), MFR_SERIAL_NUMBERS[0]))
-        if st.session_state.mfr_serial else 0,
-        key='mfr_serial_widget'
-    )
-    mfr_serial = extract_serial_number(mfr_serial_full)
-    st.session_state.mfr_serial = mfr_serial
-    sap_flow_serial = ""
+if st.session_state.device_option == 'Sap Flow Sensors':
+    available_serials = sorted_crocus_nodes[st.session_state.node_option][st.session_state.device_option].get('serial_numbers', [])
+    if available_serials:
+        sap_flow_serial_full = st.sidebar.selectbox(
+            'Select Sap Flow Sensor Serial Number',
+            available_serials,
+            key='sap_flow_serial_widget'
+        )
+        sap_flow_serial = extract_serial_number(sap_flow_serial_full)
+        st.session_state.sap_flow_serial = sap_flow_serial
+        mfr_serial = ""
+    else:
+        st.warning(f"No Sap Flow Sensors available for {st.session_state.node_option}")
+        sap_flow_serial = ""
+        mfr_serial = ""
+elif st.session_state.device_option == 'MFR Nodes':
+    available_serials = sorted_crocus_nodes[st.session_state.node_option][st.session_state.device_option].get('serial_numbers', [])
+    if available_serials:
+        mfr_serial_full = st.sidebar.selectbox(
+            'Select MFR Node Serial Number',
+            available_serials,
+            key='mfr_serial_widget'
+        )
+        mfr_serial = extract_serial_number(mfr_serial_full)
+        st.session_state.mfr_serial = mfr_serial
+        sap_flow_serial = ""
+    else:
+        st.warning(f"No MFR Nodes available for {st.session_state.node_option}")
+        mfr_serial = ""
+        sap_flow_serial = ""
 else:
     sap_flow_serial = ""
     mfr_serial = ""
 
-# Initialize selected_sensor
-if 'selected_sensor' not in st.session_state:
-    st.session_state.selected_sensor = ''
-
 # Multi-select for names so users can view multiple names and values
-if device_option == 'MFR Nodes':
-    sensors_dict = CROCUS_NODES[node_option][device_option]['sensors']
+if st.session_state.device_option == 'MFR Nodes':
+    sensors_dict = sorted_crocus_nodes[st.session_state.node_option][st.session_state.device_option]['sensors']
     sensor_list = []
     display_name_to_sensor_id = {}
     for sensor_id in sensors_dict.keys():
@@ -149,7 +176,7 @@ if device_option == 'MFR Nodes':
     # Get the measurements for the selected sensor
     unique_names = sensors_dict[selected_sensor]
 else:
-    unique_names = CROCUS_NODES[node_option][device_option]['sensors']
+    unique_names = sorted_crocus_nodes[st.session_state.node_option][st.session_state.device_option]['sensors']
 
 # 'Select Specific Data' label
 select_data_label = 'Select Specific Data'
@@ -201,12 +228,10 @@ if st.sidebar.button('Submit'):
     if not selected_names:
         st.warning('Please select specific data.')
     else:
-        st.session_state.node_option = node_option
-        st.session_state.device_option = device_option
         st.session_state.selected_names = selected_names
-        if device_option == 'Sap Flow Sensors':
+        if st.session_state.device_option == 'Sap Flow Sensors':
             st.session_state.sap_flow_serial = sap_flow_serial
-        elif device_option == 'MFR Nodes':
+        elif st.session_state.device_option == 'MFR Nodes':
             st.session_state.mfr_serial = mfr_serial
             st.session_state.selected_sensor = selected_sensor
         if time_range_option == 'Custom':
@@ -218,14 +243,14 @@ if st.sidebar.button('Submit'):
 
         # Logic to fetch and display data
         with st.spinner('Fetching data...'):
-            if device_option == 'Sap Flow Sensors' and 'sap_flow_serial' in st.session_state:
-                st.session_state.sap_flow_data = fetch_data(start, end, node_option, device_option, selected_names)
+            if st.session_state.device_option == 'Sap Flow Sensors' and 'sap_flow_serial' in st.session_state:
+                st.session_state.sap_flow_data = fetch_data(start, end, st.session_state.node_option, st.session_state.device_option, selected_names)
                 st.session_state.df = filter_data_by_serial(st.session_state.sap_flow_data, st.session_state.sap_flow_serial)
-            elif device_option == 'MFR Nodes' and 'mfr_serial' in st.session_state:
-                st.session_state.mfr_data = fetch_data(start, end, node_option, device_option, selected_names)
+            elif st.session_state.device_option == 'MFR Nodes' and 'mfr_serial' in st.session_state:
+                st.session_state.mfr_data = fetch_data(start, end, st.session_state.node_option, st.session_state.device_option, selected_names)
                 st.session_state.df = filter_data_by_serial(st.session_state.mfr_data, st.session_state.mfr_serial)
             else:
-                st.session_state.df = fetch_data(start, end, node_option, device_option, selected_names)
+                st.session_state.df = fetch_data(start, end, st.session_state.node_option, st.session_state.device_option, selected_names)
 
 df = st.session_state.df
 
@@ -233,14 +258,11 @@ df = st.session_state.df
 if not df.empty:
     df['timestamp'] = pd.to_datetime(df['timestamp']).dt.tz_convert(st.session_state.timezone)
 
-if not df.empty:
     # Display data as a dataframe along with the device name and entry count in the header
     display_dataframe(df, st.session_state.device_option, st.session_state.selected_names, DATA_UNITS, height=400)
 
     # Visualize data
     plot_visualizations(df, st.session_state.device_option)
-else:
-    st.warning('No data found for the selected options.')
 
 st.markdown("---")
 st.markdown("")
