@@ -188,6 +188,10 @@ selected_names = st.sidebar.multiselect(
     key='selected_names_widget'
 )
 
+# Show warning immediately if no data is selected
+if not selected_names:
+    st.warning('Please select specific data.')
+
 # Time range selection
 time_range_option = st.sidebar.selectbox(
     'Select Time Range',
@@ -224,10 +228,9 @@ else:
 if start == end:
     st.warning('Start and end times cannot be exactly the same.')
 
-if st.sidebar.button('Submit'):
-    if not selected_names:
-        st.warning('Please select specific data.')
-    else:
+# Only show submit button if data is selected
+if selected_names:
+    if st.sidebar.button('Submit'):
         st.session_state.selected_names = selected_names
         if st.session_state.device_option == 'Sap Flow Sensors':
             st.session_state.sap_flow_serial = sap_flow_serial
