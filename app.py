@@ -74,7 +74,7 @@ def on_device_change():
         st.session_state.selected_sensor = ''
 
 # Title
-st.title('CROCUS Node Dashboard 📊')
+st.title('CROCUS Node Dashboard')
 # Description under the title
 st.write("This is an interface to visualize and analyze data from various sensors on different CROCUS Nodes. Select your desired CROCUS Node, device, specific data, date, and time range to display the results. Additionally, users have the option to view and download all the data as a CSV file and the graphs as a PNG file.")
 
