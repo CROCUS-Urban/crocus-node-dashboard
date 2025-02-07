@@ -1,4 +1,82 @@
 CROCUS_NODES = {
+    'BIG CROCUS Node (W0A0)': {
+        'Weather Sensors': {
+            'plugin': 'registry.sagecontinuum.org/jrobrien/waggle-wxt536:*.*',
+            'sensors': [
+                "wxt.env.temp",
+                "wxt.env.humidity",
+                "wxt.env.pressure",
+                "wxt.rain.accumulation",
+                "wxt.wind.speed"
+            ]
+        },
+        'Air Quality Sensors': {
+            'plugin': 'registry.sagecontinuum.org/jrobrien/waggle-aqt:*.*',
+            'sensors': [
+                "aqt.env.temp",
+                "aqt.env.humidity",
+                "aqt.env.pressure",
+                "aqt.gas.co",
+                "aqt.gas.no",
+                "aqt.gas.no2",
+                "aqt.gas.ozone",
+                "aqt.particle.pm1",
+                "aqt.particle.pm10",
+                "aqt.particle.pm2.5"
+            ]
+        },
+        'MFR Nodes': {
+            'plugin': 'registry.sagecontinuum.org/flozano/lorawan-listener:*.*',
+            'sensors': {
+                'ATH-VPD': [
+                    "air_temperature",
+                    "barometric_pressure",
+                    "relative_humidity",
+                    "vapour_pressure_deficit"
+                ],
+                'HFP01-05': [
+                    "heat_flux"
+                ],
+                'SN500': [
+                    "in_longwave",
+                    "in_shortwave",
+                    "out_longwave",
+                    "out_shortwave"
+                ],
+                'Teros54': [
+                    "temp_d1",
+                    "temp_d2",
+                    "temp_d3",
+                    "temp_d4",
+                    "vwc_d1",
+                    "vwc_d2",
+                    "vwc_d3",
+                    "vwc_d4"
+                ],
+                'Hydros21': [
+                    "water_conductivity",
+                    "water_depth",
+                    "water_temperature"
+                ],                
+                'MFR Node': [
+                    "battery_voltage",
+                    "digital_count",
+                    "frequency",
+                    "signal.rssi",
+                    "signal.snr",
+                    "signal.spreadingfactor",
+                    "solar_voltage",
+                    "uptime",
+                    "voltage_adc"
+                ]
+            },
+            'serial_numbers': [
+                "MNLA4O10A",
+                "MNLA4O10B",
+                "MNLA4O10C"
+            ]
+        }
+    },
     'CSU CROCUS Node (W08E)': {
         'Weather Sensors': {
             'plugin': 'registry.sagecontinuum.org/jrobrien/waggle-wxt536:*.*',
@@ -59,9 +137,10 @@ CROCUS_NODES = {
                     "heat_flux"
                 ],
                 'SN500': [
-                    "net_longwave",
-                    "net_shortwave",
-                    "total_net_radiation"
+                    "in_longwave",
+                    "in_shortwave",
+                    "out_longwave",
+                    "out_shortwave"
                 ],
                 'Teros54': [
                     "temp_d1",
@@ -154,9 +233,10 @@ CROCUS_NODES = {
                     "heat_flux"
                 ],
                 'SN500': [
-                    "net_longwave",
-                    "net_shortwave",
-                    "total_net_radiation"
+                    "in_longwave",
+                    "in_shortwave",
+                    "out_longwave",
+                    "out_shortwave"
                 ],
                 'Teros54': [
                     "temp_d1",
@@ -244,9 +324,10 @@ CROCUS_NODES = {
                     "heat_flux"
                 ],
                 'SN500': [
-                    "net_longwave",
-                    "net_shortwave",
-                    "total_net_radiation"
+                    "in_longwave",
+                    "in_shortwave",
+                    "out_longwave",
+                    "out_shortwave"
                 ],
                 'Teros54': [
                     "temp_d1",
@@ -258,6 +339,11 @@ CROCUS_NODES = {
                     "vwc_d3",
                     "vwc_d4"
                 ],
+                'Hydros21': [
+                    "water_conductivity",
+                    "water_depth",
+                    "water_temperature"
+                ],                
                 'MFR Node': [
                     "battery_voltage",
                     "digital_count",
@@ -360,9 +446,10 @@ CROCUS_NODES = {
                     "heat_flux"
                 ],
                 'SN500': [
-                    "net_longwave",
-                    "net_shortwave",
-                    "total_net_radiation"
+                    "in_longwave",
+                    "in_shortwave",
+                    "out_longwave",
+                    "out_shortwave"
                 ],
                 'Teros54': [
                     "temp_d1",
@@ -374,6 +461,11 @@ CROCUS_NODES = {
                     "vwc_d3",
                     "vwc_d4"
                 ],
+                'Hydros21': [
+                    "water_conductivity",
+                    "water_depth",
+                    "water_temperature"
+                ],                
                 'MFR Node': [
                     "battery_voltage",
                     "digital_count",
@@ -406,8 +498,10 @@ DATA_UNITS = {
     "digital_count": "Count",
     "frequency": "Hz",
     "heat_flux": "W/m²",
-    "net_longwave": "W/m²",
-    "net_shortwave": "W/m²",
+    "in_longwave": "W/m²",
+    "in_shortwave": "W/m²",
+    "out_longwave": "W/m²",
+    "out_shortwave": "W/m²",
     "relative_humidity": "%",
     "signal.rssi": "dBm",
     "signal.snr": "dB",
@@ -458,6 +552,7 @@ DATA_UNITS = {
 
 NODE_PORTAL_LINKS = {
     'UIC CROCUS Node (W096)': 'https://crocus.sagecontinuum.org/node/W096',
+    'BIG CROCUS Node (W0A0)': 'https://crocus.sagecontinuum.org/node/W0A0',
     'CSU CROCUS Node (W08E)': 'https://crocus.sagecontinuum.org/node/W08E',
     'NEIU CROCUS Node (W08D)': 'https://crocus.sagecontinuum.org/node/W08D',
     'NU CROCUS Node (W099)': 'https://crocus.sagecontinuum.org/node/W099'
