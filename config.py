@@ -25,6 +25,22 @@ CROCUS_NODES = {
                 "aqt.particle.pm2.5"
             ]
         },
+        'Sap Flow Sensors': {
+            'plugin': 'registry.sagecontinuum.org/flozano/lorawan-listener:*.*',
+            'sensors': [
+                "uncorrected_inner",
+                "uncorrected_outer",
+                "battery_voltage",
+                "signal.rssi",
+                "signal.snr",
+                "signal.spreadingfactor"
+            ],
+            'serial_numbers': [
+                "SX61NA0U",
+                "SX61NA09",
+                "SX61NA0I"
+            ]
+        },        
         'MFR Nodes': {
             'plugin': 'registry.sagecontinuum.org/flozano/lorawan-listener:*.*',
             'sensors': {
@@ -74,6 +90,33 @@ CROCUS_NODES = {
                 "MNLA4O10A",
                 "MNLA4O10B",
                 "MNLA4O10C"
+            ]
+        }
+    },
+    'CCICS CROCUS Node (W08B)': {
+        'Weather Sensors': {
+            'plugin': 'registry.sagecontinuum.org/jrobrien/waggle-wxt536:*.*',
+            'sensors': [
+                "wxt.env.temp",
+                "wxt.env.humidity",
+                "wxt.env.pressure",
+                "wxt.rain.accumulation",
+                "wxt.wind.speed"
+            ]
+        },
+        'Air Quality Sensors': {
+            'plugin': 'registry.sagecontinuum.org/jrobrien/waggle-aqt:*.*',
+            'sensors': [
+                "aqt.env.temp",
+                "aqt.env.humidity",
+                "aqt.env.pressure",
+                "aqt.gas.co",
+                "aqt.gas.no",
+                "aqt.gas.no2",
+                "aqt.gas.ozone",
+                "aqt.particle.pm1",
+                "aqt.particle.pm10",
+                "aqt.particle.pm2.5"
             ]
         }
     },
@@ -553,6 +596,7 @@ DATA_UNITS = {
 NODE_PORTAL_LINKS = {
     'UIC CROCUS Node (W096)': 'https://crocus.sagecontinuum.org/node/W096',
     'BIG CROCUS Node (W0A0)': 'https://crocus.sagecontinuum.org/node/W0A0',
+    'CCICS CROCUS Node (W08B)': 'https://crocus.sagecontinuum.org/node/W08B',
     'CSU CROCUS Node (W08E)': 'https://crocus.sagecontinuum.org/node/W08E',
     'NEIU CROCUS Node (W08D)': 'https://crocus.sagecontinuum.org/node/W08D',
     'NU CROCUS Node (W099)': 'https://crocus.sagecontinuum.org/node/W099'
